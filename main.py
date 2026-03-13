@@ -75,9 +75,24 @@ def main(page: ft.Page):
         if usuario == TEST and contra == TEST1:
 
             page.clean()
+            
+            
+            til = ft.Container(
+            content=ft.Text(
+                "Panel principal",
+                color=ft.Colors.WHITE,
+                size=50,
+                weight=ft.FontWeight.BOLD
+                ),
+                bgcolor=ft.Colors.BLACK,
+                padding=20,
+                width=page.width,
+                alignment=ft.Alignment(0,0)
+                )
+            
 
             bienvenida = ft.Text(
-                "Pantalla de inicio",
+                "Bienvenida al sistema",
                 size=30,
                 weight=ft.FontWeight.BOLD
             )
@@ -90,8 +105,10 @@ def main(page: ft.Page):
             )
 
             page.navigation_bar = barra
-            page.add(bienvenida,
-                     sub)
+            page.add(
+                til,
+                bienvenida,
+                sub)
 
         else:
             page.dialog = ale
