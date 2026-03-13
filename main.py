@@ -5,20 +5,21 @@ TEST1 = "1234"
 
 def main(page: ft.Page):
     page.title = "Practica"
-    titulo=ft.Text("Iniciar Sesion", size=30)
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
-    page.horizontal_alignment = ft.MainAxisAlignment.CENTER
-    
-    corr=ft.TextField(
+    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
+
+    titulo = ft.Text("Iniciar Sesion", size=30)
+
+    corr = ft.TextField(
         label="Ingresar el correo del usuario ",
         hint_text="correo",
         border=ft.InputBorder.NONE,
         margin=ft.Margin(top=15),
         value="",
         icon=ft.Icons.EMAIL
-        )
-    
-    cont=ft.TextField(
+    )
+
+    cont = ft.TextField(
         label="Ingresa la contraseña",
         hint_text="Contraseña",
         border=ft.InputBorder.NONE,
@@ -27,52 +28,89 @@ def main(page: ft.Page):
         can_reveal_password=True,
         margin=ft.Margin(top=15),
         icon=ft.Icons.PASSWORD
-        )
+    )
 
-    mensaje_texto = ft.Text("")
     
-    mensaje = ft.Container(
-        content=mensaje_texto,
-        bgcolor=ft.Colors.TRANSPARENT,
-        padding=10,
-        margin=ft.Margin(top=15),
+
+
+    def cell(e):
+        ale.open = False
+        page.update()
+
+    ale = ft.AlertDialog(
+        title=ft.Text("Error"),
+        content=ft.Text("Tus datos son incorrectos"),
+        actions=[
+            ft.TextButton("Cerrar", on_click=cell)
+        ]
     )
     
-    def entrar(e):
-        usuario=corr.value
-        contra=cont.value
-        
-        if usuario==TEST and contra==TEST1:
-            mensaje_texto.value="Correcto"
-            mensaje_texto.color=ft.Colors.WHITE
-            mensaje.bgcolor=ft.Colors.GREEN
-        else:
-            mensaje_texto.value="Algo anda mal"
-            mensaje_texto.color=ft.Colors.WHITE
-            mensaje.bgcolor=ft.Colors.RED
-        
-        page.update()
     
+    menCo = ft.Text("Correo para recuperar enviado",
+        color=ft.Colors.WHITE,
+        bgcolor=ft.Colors.BLACK,
+        visible=False
+    )
+    
+    def mosMen(e):
+        menCo.visible = True
+        page.update()
+
+    def cam(e):
+        print("donde andas:", e.control.selected_index)
+
+    barra = ft.NavigationBar(
+        destinations=[
+            ft.NavigationBarDestination(icon=ft.Icons.HOME, label="Inicio"),
+            ft.NavigationBarDestination(icon=ft.Icons.GPS_FIXED, label="Explorar"),
+            ft.NavigationBarDestination(icon=ft.Icons.PERSON, label="Perfil"),
+        ],
+        on_change=cam
+    )
+
+    def entrar(e):
+        usuario = corr.value
+        contra = cont.value
+
+        if usuario == TEST and contra == TEST1:
+
+            page.clean()
+
+            bienvenida = ft.Text(
+                "Pantalla de inicio",
+                size=30,
+                weight=ft.FontWeight.BOLD
+            )
+            
+            sub = ft.Text(
+                "erasing me, erasing you",
+                size=15,
+                color=ft.Colors.RED,
+                weight=ft.FontWeight.BOLD
+            )
+
+            page.navigation_bar = barra
+            page.add(bienvenida,
+                     sub)
+
+        else:
+            page.dialog = ale
+            ale.open = True
+
+        page.update()
+
     bot = ft.Button(
         content="Iniciar",
         bgcolor=ft.Colors.BLACK,
         color=ft.Colors.WHITE,
         on_click=entrar
     )
-    
-    olv=ft.TextButton(
-        content="Olvidastes la contraseña?",
+
+    olv = ft.TextButton(
+        content="Olvidaste la contraseña?",
         margin=ft.Margin(top=15),
+        on_click=mosMen
     )
-    
-    
-    barra=ft.NavigationBar(
-    destinations=[
-        ft.NavigationBarDestination(icon=ft.Icons.HOME, label="Inicio"),
-        ft.NavigationBarDestination(icon=ft.Icons.GPS_FIXED , label="Explorar"),
-        ft.NavigationBarDestination(icon=ft.Icons.PERSON, label="Perfil"),
-    ],
-)
 
     page.add(
         titulo,
@@ -80,8 +118,8 @@ def main(page: ft.Page):
         cont,
         olv,
         bot,
-        mensaje,
-        barra
+        menCo,
+        ale
     )
 
 ft.run(main)
